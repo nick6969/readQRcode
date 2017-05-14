@@ -14,7 +14,6 @@ class QRcodeScanVC: UIViewController , AVCaptureMetadataOutputObjectsDelegate {
     
     var captureSession:AVCaptureSession?
     var videoPreviewLayer:AVCaptureVideoPreviewLayer?
-    var qrCodeFrameView:UIView?
     
 
     let supportedBarCodes = [AVMetadataObjectTypeQRCode]
@@ -38,12 +37,12 @@ class QRcodeScanVC: UIViewController , AVCaptureMetadataOutputObjectsDelegate {
         switch authStatus {
         case AVAuthorizationStatus.authorized:
             print("AVAuthorizationStatus.Authorized")
+            
         case .denied , .restricted:
             let alert = UIAlertController(title: "您尚未准予使用相機", message: "", preferredStyle: .alert)
             alert.addAction(UIAlertAction(title: "確定", style: .destructive, handler: {_ in
                 self.navigationController?.popViewController(animated: true)
             }))
-            
             self.present(alert, animated: true, completion: nil)
             
         case AVAuthorizationStatus.notDetermined:
@@ -74,15 +73,6 @@ class QRcodeScanVC: UIViewController , AVCaptureMetadataOutputObjectsDelegate {
             videoPreviewLayer?.frame = view.layer.bounds
             view.layer.addSublayer(videoPreviewLayer!)
             
-            qrCodeFrameView = UIView()
-            
-            if let qrCodeFrameView = qrCodeFrameView {
-                qrCodeFrameView.layer.borderColor = UIColor.green.cgColor
-                qrCodeFrameView.layer.borderWidth = 2
-                view.addSubview(qrCodeFrameView)
-                view.bringSubview(toFront: qrCodeFrameView)
-            }
-            
         } catch {
             print(error.localizedDescription)
             return
@@ -93,7 +83,6 @@ class QRcodeScanVC: UIViewController , AVCaptureMetadataOutputObjectsDelegate {
     func captureOutput(_ captureOutput: AVCaptureOutput!, didOutputMetadataObjects metadataObjects: [Any]!, from connection: AVCaptureConnection!){
         
         guard metadataObjects != nil && metadataObjects.count != 0 else {
-            qrCodeFrameView?.frame = .zero
             return
         }
         
